@@ -18,7 +18,7 @@ app.get('/proxy', async (req, res) => {
     const contentType = upstream.headers.get('content-type');
     if (contentType) res.setHeader('Content-Type', contentType);
     res.setHeader('Access-Control-Allow-Origin', '*');
-    // stream body
+
     const passthrough = new PassThrough();
     upstream.body.pipe(passthrough).pipe(res);
   } catch (err) {
