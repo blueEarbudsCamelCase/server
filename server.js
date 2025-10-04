@@ -1,7 +1,8 @@
-// Minimal express proxy with /proxy and /healthz
+// ...existing code...
+// Minimal express proxy with /proxy and /healthz using undici fetch
 const express = require('express');
 const { PassThrough } = require('stream');
-const fetch = (...args) => import('node-fetch').then(m => m.default(...args));
+const { fetch } = require('undici');
 const app = express();
 
 app.get('/healthz', (req, res) => res.status(200).send('OK'));
@@ -19,6 +20,7 @@ app.get('/proxy', async (req, res) => {
     if (contentType) res.setHeader('Content-Type', contentType);
     res.setHeader('Access-Control-Allow-Origin', '*');
 
+    // pipe upstream body to response (undici returns a Node stream)
     const passthrough = new PassThrough();
     upstream.body.pipe(passthrough).pipe(res);
   } catch (err) {
